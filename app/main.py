@@ -1,39 +1,37 @@
-# main.py
-
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from app.database import Base, engine
+from app.api import auth, users, products, inventory, media
 
-from api import auth, users, products, items, media
-from database import Base, engine
-
-# Datenbanktabellen erzeugen (falls nicht vorhanden)
+# Tabellen anlegen
 Base.metadata.create_all(bind=engine)
 
-# FastAPI-Anwendung
 app = FastAPI(
-    title="SmartScanner Backend",
+    title="Smart Scanner Backend",
     version="0.1.0",
-    description="API für Benutzerkonten, Produktscans und Verwaltung"
+    description="API für User, Produkt-Scan, Bilder-Upload"
 )
 
-# CORS erlauben für lokale Entwicklung (App/Webfrontend)
+# CORS (Dev)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # in Produktion ersetzen mit ["https://deine-app.com"]
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# API-Router einbinden
+# Static Files (Bilder)
+app.mount("/media", StaticFiles(directory="media"), name="media")
+
+# Router
 app.include_router(auth.router, prefix="/auth", tags=["auth"])
 app.include_router(users.router, prefix="/users", tags=["users"])
 app.include_router(products.router, prefix="/products", tags=["products"])
-app.include_router(items.router, prefix="/items", tags=["items"])
+app.include_router(inventory.router, prefix="/inventory", tags=["inventory"])
 app.include_router(media.router, prefix="/media", tags=["media"])
 
-
-# Health-Check-Route
 @app.get("/")
-def read_root():
-    return {"status": "ok", "message": "backend is running"}
+def health_check():
+    return {"status": "ok"}
