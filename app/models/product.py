@@ -1,6 +1,5 @@
 from sqlalchemy import Column, String
 from app.database import Base
-
 class Product(Base):
     __tablename__ = "products"
     barcode = Column(String, primary_key=True, index=True)

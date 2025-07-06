@@ -1,7 +1,7 @@
-import uuid
 from sqlalchemy.orm import Session
 from app.models.user import User
-from app.utils.auth import get_password_hash
+from app.utils.hash import get_password_hash
+import uuid
 
 def create_user(db: Session, email: str, password: str):
     user = User(
