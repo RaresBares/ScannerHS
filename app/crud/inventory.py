@@ -1,3 +1,5 @@
+from http.client import HTTPException
+
 from sqlalchemy.orm import Session
 from app.models.inventory_item import InventoryItem
 from app.crud.product import get_product, create_product
@@ -21,10 +23,13 @@ def add_inventory(db: Session, user_id: str, barcode: str, quantity: int):
     db.refresh(item)
     return item
 
+
 def remove_inventory(db: Session, user_id: str, barcode: str, quantity: int):
     item = get_inventory_item(db, user_id, barcode)
     if not item:
-        return None
+        raise HTTPException(status_code=404, detail="Element nicht gefunden")
+    if item.quantity == 0:
+        raise HTTPException(status_code=409, detail="Keine Menge mehr übrig")
     item.quantity = max(item.quantity - quantity, 0)
     db.commit()
     db.refresh(item)

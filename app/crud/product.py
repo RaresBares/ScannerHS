@@ -10,3 +10,4 @@ def create_product(db: Session, barcode: str, name: str | None, image_url: str |
     db.commit()
     db.refresh(prod)
     return prod
+

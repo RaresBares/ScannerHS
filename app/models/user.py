@@ -1,12 +1,16 @@
-from sqlalchemy import Column, String, DateTime
+import uuid
+from sqlalchemy import Column, String, DateTime, Integer, UUID
 from sqlalchemy.sql import func
 from app.database import Base
 
 class User(Base):
     __tablename__ = "users"
-    id = Column(String, primary_key=True, index=True)
+    uuid = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     email = Column(String, unique=True, index=True, nullable=False)
     hashed_password = Column(String, nullable=False)
+    age = Column(Integer, nullable=True)
+    username = Column(String, nullable=False)
+    joined = Column(DateTime, nullable=False)
     fullname = Column(String, nullable=True)
     profile_image = Column(String, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
