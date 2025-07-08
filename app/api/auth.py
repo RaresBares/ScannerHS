@@ -1,15 +1,16 @@
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
+from pydantic import EmailStr, ValidationError
 from sqlalchemy.orm import Session
 from jose import jwt, JWTError
 from datetime import datetime, timedelta
 from passlib.context import CryptContext
 
 from app.config import settings
-from app.database import SessionLocal, get_db
-from app.schemas.user import UserCreate, UserOut
+from app.database import get_db
+from app.schemas.user import UserCreate, UserOut, UserLogin
 from app.schemas.token import Token
-from app.crud.user import get_user_by_email, create_user
+from app.crud.user import get_user_by_email, create_user, get_user_by_uuid
 
 router = APIRouter()
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -31,7 +32,8 @@ def create_access_token(data: dict) -> str:
     return jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
 
 
-def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(SessionLocal)):
+
+def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     credentials_exception = HTTPException(
         status_code=401,
         detail="Could not validate credentials",
@@ -50,20 +52,50 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
         raise credentials_exception
     return user
 
+from pydantic import EmailStr, ValidationError
+
+from pydantic import BaseModel, EmailStr, ValidationError
+
+class EmailCheck(BaseModel):
+    email: EmailStr
+
+
+import re
+EMAIL_REGEX = re.compile(r"^[\w\.-]+@[\w\.-]+\.\w+$")
+
+def check_email(email: str, db: Session) -> bool:
+    if get_user_by_email(db, email):
+        raise HTTPException(status_code=400, detail="Email already registered")
+    if not EMAIL_REGEX.match(email):
+        raise HTTPException(status_code=400, detail="Email not valid")
+    return True
 
 @router.post("/register", response_model=UserOut)
 def register(user: UserCreate, db: Session = Depends(get_db)):
-    if get_user_by_email(db, user.email):
+    if not check_email(user.email, db):
         raise HTTPException(status_code=400, detail="Email already registered")
-    return create_user(db, user.email, user.password)
+    return create_user(db=db, email=user.email, password=user.password, username=user.username)
 
 
+from fastapi import Request
 
 @router.post("/login", response_model=Token)
-def login(user: UserCreate, db: Session = Depends(SessionLocal)):
+async def login(request: Request, db: Session = Depends(get_db)):
+    content_type = request.headers.get("content-type", "")
+
+    if "application/json" in content_type:
+        body = await request.json()
+        user = UserLogin(**body)
+    elif "application/x-www-form-urlencoded" in content_type:
+        form = await request.form()
+        user = UserLogin(email=form.get("username"), password=form.get("password"))
+    else:
+        raise HTTPException(status_code=400, detail="Unsupported content type")
+
     db_user = get_user_by_email(db, user.email)
     if not db_user or not verify_password(user.password, db_user.hashed_password):
         raise HTTPException(status_code=400, detail="Invalid credentials")
+
     token = create_access_token({"sub": db_user.email})
     return {"access_token": token, "token_type": "bearer"}
 

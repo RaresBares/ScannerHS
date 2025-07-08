@@ -1,3 +1,4 @@
+from uuid import UUID
 from pydantic import BaseModel
 
 class InventoryCreate(BaseModel):
@@ -6,7 +7,7 @@ class InventoryCreate(BaseModel):
 
 class InventoryOut(BaseModel):
     id: int
-    user_id: str
+    user_id: UUID  # ← hier geändert
     barcode: str
     quantity: int
 
