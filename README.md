@@ -6,6 +6,8 @@
 
 ##  TODO
 - [ ] Fertigstellen des Backends
+- [ ] Rest-API integration
+- [ ] SQL-Lite: Logs speichern
 - [ ] Dokumentation
 - [ ] Privileges
 - [ ] Web-Frontend

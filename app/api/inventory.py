@@ -6,7 +6,7 @@ from app.api.auth import get_current_user
 
 from app.database import get_db
 from app.models.inventory_item import InventoryItem
-from app.schemas.inventory_item import InventoryOut
+from app.schemas.inventory_item import InventoryOut, InventoryCreate
 from app.crud.product import get_product, create_product
 from app.services.openfoodfacts import fetch_product_data
 from app.crud.inventory import remove_inventory, list_inventory
@@ -111,4 +111,20 @@ def consume_item(barcode: str,
     res = remove_inventory(db, current_user.uuid, barcode, quantity=1)
     if not res:
         raise HTTPException(status_code=404, detail="Nothing to consume")
+    return res
+
+
+@router.post("/get_item", response_model=InventoryOut)
+def get_item(
+    barcode: str,
+    current_user=Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    res = db.query(InventoryItem).filter(
+        InventoryItem.user_uuid == current_user.uuid,
+        InventoryItem.barcode == barcode
+    ).first()
+
+    if not res:
+        return InventoryOut(barcode=barcode, quantity=0)  # kein Element
     return res
