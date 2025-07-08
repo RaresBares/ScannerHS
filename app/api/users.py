@@ -14,12 +14,17 @@ def get_profile(current_user = Depends(get_current_user)):
     return current_user
 
 
-@router.get("/user/{user_id}", response_model=UserOut)
-def get_user_by_id(user_id: str, db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.id == user_id).first()
+@router.get("/user/{user_uuid}", response_model=UserOut)
+def get_user_by_id(user_uuid: str,
+                   current_user = Depends(get_current_user),
+                   db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.id == user_uuid).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
-    return user
+    if current_user.priv > user.priv:
+        return user
+    raise HTTPException(status_code=500, detail="No Rights")
+    return None
 
 @router.get("/test", tags=["users"])
 def read_me():

@@ -1,6 +1,9 @@
 from pydantic import BaseModel, EmailStr, Field
 from typing import Optional
 
+from app.utils.Privilege import Privilege
+
+
 class UserCreate(BaseModel):
     email: EmailStr
     username: str
@@ -10,6 +13,7 @@ class UserOut(BaseModel):
     uuid: str
     email: EmailStr
     username: str
+    privilege: Privilege
     fullname: Optional[str]
     profile_image: Optional[str]
 
