@@ -4,18 +4,18 @@ from sqlalchemy.orm import Session
 from app.models.inventory_item import InventoryItem
 from app.crud.product import get_product, create_product
 
-def get_inventory_item(db: Session, user_id: str, barcode: str):
+def get_inventory_item(db: Session, user_uuid: str, barcode: str):
     return (
         db.query(InventoryItem)
-          .filter(InventoryItem.user_id == user_id,
+          .filter(InventoryItem.user_uuid == user_uuid,
                   InventoryItem.barcode == barcode)
           .first()
     )
 
-def add_inventory(db: Session, user_id: str, barcode: str, quantity: int):
-    item = get_inventory_item(db, user_id, barcode)
+def add_inventory(db: Session, user_uuid: str, barcode: str, quantity: int):
+    item = get_inventory_item(db, user_uuid, barcode)
     if not item:
-        item = InventoryItem(user_id=user_id, barcode=barcode, quantity=quantity)
+        item = InventoryItem(user_uuid=user_uuid, barcode=barcode, quantity=quantity)
         db.add(item)
     else:
         item.quantity += quantity
@@ -23,9 +23,11 @@ def add_inventory(db: Session, user_id: str, barcode: str, quantity: int):
     db.refresh(item)
     return item
 
-
-def remove_inventory(db: Session, user_id: str, barcode: str, quantity: int):
-    item = get_inventory_item(db, user_id, barcode)
+def delete_inventory_by_user(db: Session, user_uuid: str):
+    db.query(InventoryItem).filter(user_uuid == InventoryItem.user_uuid).delete()
+    db.commit()
+def remove_inventory(db: Session, user_uuid: str, barcode: str, quantity: int):
+    item = get_inventory_item(db, user_uuid, barcode)
     if not item:
         raise HTTPException(status_code=404, detail="Element nicht gefunden")
     if item.quantity == 0:
@@ -35,5 +37,5 @@ def remove_inventory(db: Session, user_id: str, barcode: str, quantity: int):
     db.refresh(item)
     return item
 
-def list_inventory(db: Session, user_id: str):
-    return db.query(InventoryItem).filter(InventoryItem.user_id == user_id).all()
+def list_inventory(db: Session, user_uuid: str):
+    return db.query(InventoryItem).filter(InventoryItem.user_uuid == user_uuid).all()

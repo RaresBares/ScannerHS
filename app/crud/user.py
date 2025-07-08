@@ -22,4 +22,4 @@ def get_user_by_email(db: Session, email: str):
     return db.query(User).filter(User.email == email).first()
 
 def get_user_by_uuid(db: Session, user_id: str):
-    return db.query(User).filter(User.id == user_id).first()
+    return db.query(User).filter(User.uuid == user_id).first()

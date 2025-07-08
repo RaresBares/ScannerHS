@@ -2,6 +2,8 @@ import uuid
 from sqlalchemy import Column, String, DateTime, Integer, UUID
 from sqlalchemy.sql import func
 from app.database import Base
+from app.utils.Privilege import PrivilegeType, Privilege
+
 
 class User(Base):
     __tablename__ = "users"
@@ -14,3 +16,4 @@ class User(Base):
     fullname = Column(String, nullable=True)
     profile_image = Column(String, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+    privilege = Column(PrivilegeType(), nullable=False, default=Privilege.U)

@@ -45,7 +45,7 @@ def scan_item(barcode: str,
         product.name = f"Unbekanntes Produkt ({barcode})"
 
     item = db.query(InventoryItem).filter_by(
-        user_id=current_user.uuid,
+        user_uuid=current_user.uuid,
         barcode=barcode
     ).first()
 
@@ -65,6 +65,42 @@ def scan_item(barcode: str,
     db.commit()
     db.refresh(item)
     return item
+
+
+@router.get("/clear_inventory", response_model=list[InventoryOut])
+def clear_inventory(user = Depends(get_current_user),
+                    db: Session = Depends(get_db)):
+    db.query(
+        InventoryItem
+    ).filter_by(user_uuid=user.uuid).delete()
+    db.commit()
+    return list_inventory(db, user.uuid)
+
+
+from datetime import datetime
+
+@router.post("/set_amount", response_model=list[InventoryOut])
+def set_amount(future: InventoryOut,
+               user = Depends(get_current_user),
+               db: Session = Depends(get_db)):
+
+    item = db.query(InventoryItem).filter_by(
+        user_uuid=user.uuid,
+        barcode=future.barcode
+    ).first()
+
+    if not item:
+        db.add(InventoryItem(
+            user_uuid=user.uuid,
+            barcode=future.barcode,
+            quantity=future.quantity,
+            created_at=datetime.now()
+        ))
+    else:
+        item.quantity = future.quantity
+
+    db.commit()
+    return list_inventory(db, user.uuid)
 
 
 @router.post("/consume", response_model=InventoryOut)

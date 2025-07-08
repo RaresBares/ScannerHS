@@ -9,6 +9,8 @@ class InventoryOut(BaseModel):
     id: int
     user_id: UUID  # ← hier geändert
     barcode: str
+    upper_bound: int
+    lower_bound: int
     quantity: int
 
     class Config:
