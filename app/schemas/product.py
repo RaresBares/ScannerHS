@@ -5,11 +5,13 @@ class ProductCreate(BaseModel):
     barcode: str
     name: Optional[str]
     image_url: Optional[str]
+    description: Optional[str]
 
 class ProductOut(BaseModel):
     barcode: str
     name: Optional[str]
     image_url: Optional[str]
 
-    class Config:
-        orm_mode = True
+    model_config = {"from_attributes": True}
+
+

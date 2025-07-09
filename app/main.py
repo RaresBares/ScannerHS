@@ -1,9 +1,12 @@
+from dotenv import load_dotenv
+load_dotenv()
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer
 from fastapi.staticfiles import StaticFiles
 from starlette.responses import RedirectResponse
 
+from app.config import settings
 from app.database import Base, engine
 from app.api import auth, users, products, inventory, media
 
