@@ -2,7 +2,7 @@ import uuid
 from sqlalchemy import Column, String, DateTime, Integer, UUID
 from sqlalchemy.sql import func
 from app.database import Base
-from app.utils.Privilege import PrivilegeType, Privilege
+from app.utils.privilege import PrivilegeType, Privilege
 
 
 class User(Base):

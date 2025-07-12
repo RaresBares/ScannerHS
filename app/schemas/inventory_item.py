@@ -1,53 +1,64 @@
-from typing import Optional
-from uuid import UUID
-from pydantic import BaseModel, field_serializer
-from typing import Optional
 from pydantic import BaseModel, Field
-from app.schemas.product import ProductCreate
-from app.schemas.product         import ProductCreate
+from typing import Optional
+from datetime import datetime
 
 
-class InventoryCreate(BaseModel):
-    barcode: str
-    quantity: int
-    model_config = {"from_attributes": True}
+# ───────────────────────────────────────────────────────────────
+# Basisschema – wird nicht direkt verwendet
+# ───────────────────────────────────────────────────────────────
+
+class InventoryBase(BaseModel):
+    barcode: str = Field(..., description="EAN/UPC Barcode des Produkts")
+    name: Optional[str] = Field(default=None, description="Produktname (optional)")
+    quantity: int = Field(default=1, ge=0, description="Anzahl im Lager")
+    shelf_id: Optional[int] = Field(default=None, description="Regal-ID, None = kein Regal")
+    upper_bound: int = Field(default=0, ge=0, description="Optionaler Maximalwert")
+    lower_bound: int = Field(default=0, ge=0, description="Optionaler Minimalwert")
+    exp_date: Optional[datetime] = Field(default=None, description="Ablaufdatum")
 
 
-class InventoryOut(BaseModel):
-    id: int
-    user_uuid: UUID
-    barcode: str
-    upper_bound: int
-    lower_bound: int
-    quantity: int
-    model_config = {"from_attributes": True}
+# ───────────────────────────────────────────────────────────────
+# Schema für Rückgabe von Daten (z. B. GET-Routen)
+# ───────────────────────────────────────────────────────────────
 
-    @field_serializer("user_uuid")
-    def serialize_user_uuid(self, v: UUID) -> str:
-        return str(v)
+class InventoryOut(InventoryBase):
+    created_at: datetime
 
+    class Config:
+        orm_mode = True
+
+
+# ───────────────────────────────────────────────────────────────
+# Schema für Erstellung oder manuelles Setzen
+# ───────────────────────────────────────────────────────────────
+
+class InventoryCreate(InventoryBase):
+    pass
+
+
+# ───────────────────────────────────────────────────────────────
+# Schema für Mengen-Setzen mit Produktanlage-Option
+# ───────────────────────────────────────────────────────────────
+
+from app.schemas.product import ProductCreate  # falls nicht schon importiert
 
 class InventorySet(BaseModel):
-    """
-    DTO für den Endpunkt `set_amount`.
+    barcode: str
+    quantity: int = Field(..., ge=0)
+    create_product_if_missing: bool = False
+    created_product: Optional[ProductCreate] = None
 
-    Attributes:
-        barcode (str): Eindeutiger Barcode des Produkts.
-        quantity (int): Gewünschte Menge im Inventar.
-        create_product_if_missing (bool): Gibt an, ob bei fehlendem Produkt automatisch ein neues angelegt werden soll. Standard: False.
-        created_product (Optional[ProductCreate]): Produktdaten zur Neuanlage; erforderlich, wenn `create_product_if_missing=True`.
-    """
-    barcode: str = Field(
-        ..., description="Eindeutiger Barcode des Produkts."
-    )
-    quantity: int = Field(
-        ..., description="Menge, die im Inventar gesetzt werden soll."
-    )
-    create_product_if_missing: bool = Field(
-        False,
-        description="True, wenn bei fehlendem Produkt automatisch ein neues angelegt werden soll."
-    )
-    created_product: Optional[ProductCreate] = Field(
-        None,
-        description="Daten für die Neuanlage des Produkts (erforderlich, wenn create_product_if_missing=True)."
-    )
+
+# ───────────────────────────────────────────────────────────────
+# Schema für PATCH (Metadaten ändern)
+# ───────────────────────────────────────────────────────────────
+
+class InventoryMetaUpdate(BaseModel):
+    name: Optional[str] = None
+    shelf_id: Optional[int] = None
+    exp_date: Optional[datetime] = None
+    upper_bound: Optional[int] = Field(default=None, ge=0)
+    lower_bound: Optional[int] = Field(default=None, ge=0)
+
+    class Config:
+        orm_mode = True

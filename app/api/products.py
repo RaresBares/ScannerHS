@@ -13,7 +13,7 @@ def read_product(barcode: str, db: Session = Depends(get_db)):
         raise HTTPException(404, "Product not found")
     return prod
 
-@router.post("/", response_model=ProductOut)
+@router.post("/create", response_model=ProductOut)
 def add_product(data: ProductCreate, db: Session = Depends(get_db)):
     if get_product(db, data.barcode):
         raise HTTPException(400, "Already exists")
