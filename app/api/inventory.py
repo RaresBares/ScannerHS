@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 from fastapi import APIRouter, Depends, HTTPException, Query, Body
+from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse, StreamingResponse
 from sqlalchemy.orm import Session
 from sqlalchemy import func
@@ -25,7 +26,7 @@ router = APIRouter()
 
 @router.get("/", response_model=list[InventoryOut])
 def get_inventory(current_user=Depends(get_current_user), db: Session = Depends(get_db)):
-    return list_inventory(db, current_user.id)
+    return list_inventory(db, current_user.uuid)
 
 
 @router.get("/by_shelf/{shelf_id}", response_model=list[InventoryOut])
@@ -101,7 +102,7 @@ def export_inventory(format: str = Query("json", regex="^(json|csv)$"), user=Dep
     items = db.query(InventoryItem).filter_by(user_uuid=user.uuid).all()
 
     if format == "json":
-        return JSONResponse(content=[InventoryOut.from_orm(item).dict() for item in items])
+        return JSONResponse(content=jsonable_encoder([InventoryOut.from_orm(item) for item in items]))
 
     output = io.StringIO()
     writer = csv.writer(output)
