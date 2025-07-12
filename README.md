@@ -5,14 +5,12 @@
 
 
 ##  TODO
-- [ ] Fertigstellen des Backends
-- [ ] Rest-API integration
-- [ ] SQL-Lite: Logs speichern
+- [ ] Set-Up professional backend structure
+- [ ] Rest-API conform
 - [ ] Dokumentation
-- [ ] Privileges
 - [ ] Web-Frontend
-- [ ] Security/Encryption
-- [ ] CI/CD Pipeline aufsetzen
+- [ ] Setup DB structure
+- [ ] Setup standart values
 - [ ] Docker-Setup
 
 
@@ -20,6 +18,7 @@
 
 
 - **User anlegen** (`POST /users`)  
+- **Logging** (`POST /logs`)  
 - **Login** und JWT-Token holen (`POST /login`)  
 - **Aktuellen User** abrufen (`GET /users/me`)  
 - **User nach ID** abrufen (`GET /user/{user_id}`)  
