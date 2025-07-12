@@ -3,7 +3,7 @@ from typing import Optional
 
 from uuid import UUID
 
-from app.utils.Privilege import Privilege
+from app.utils.privilege import Privilege
 
 
 class UserCreate(BaseModel):

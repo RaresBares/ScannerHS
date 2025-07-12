@@ -1,4 +1,6 @@
 from dotenv import load_dotenv
+from slowapi.middleware import SlowAPIMiddleware
+
 load_dotenv()
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -13,12 +15,32 @@ from app.api import auth, users, products, inventory, media
 # Tabellen anlegen
 Base.metadata.create_all(bind=engine)
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
+# z. B. einmalig in main.py oder separatem script
+
+from app.database import log_engine, LogBase
+
+LogBase.metadata.create_all(bind=log_engine)
+
+
+from slowapi import Limiter
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
+from fastapi import Request, FastAPI
+
+from app.extensions import limiter
 
 app = FastAPI(
     title="Smart Scanner Backend",
     version="0.1.0",
     description="API für User, Produkt-Scan, Bilder-Upload"
 )
+
+from app.extensions import limiter
+from slowapi.middleware import SlowAPIMiddleware
+
+app.state.limiter = limiter
+app.add_middleware(SlowAPIMiddleware)
+
 
 # CORS (Dev)
 app.add_middleware(
