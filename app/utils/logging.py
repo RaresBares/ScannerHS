@@ -1,4 +1,5 @@
 from datetime import datetime
+from fastapi.encoders import jsonable_encoder  # WICHTIG
 from app.database import LogSessionLocal
 from app.models.inventory_log import InventoryLog
 
@@ -10,7 +11,7 @@ def log_action(user_uuid: str, action: str, barcode: str = None, shelf_id: int =
         barcode=barcode,
         shelf_id=shelf_id,
         created_at=datetime.utcnow(),
-        details=details or {}
+        details=jsonable_encoder(details or {})  # <- hier wird das dict serialisierbar gemacht
     )
     db.add(log)
     db.commit()
