@@ -3,19 +3,21 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 export default function SettingCard() {
     return (
         <div
-            className="w-100 h-100 d-flex flex-column overflow-auto"
+            className="w-100 h-100 d-flex flex-column "
             style={{
                 padding: '1rem',
-                backgroundColor: 'rgba(255, 255, 255, 0.07)',
+                backgroundColor: 'rgba(255, 255, 255, 0.03)',
                 borderRadius: '1rem',
                 backdropFilter: 'blur(6px)',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
+                border: '1px solid rgba(255, 255, 255, 0.0)',
                 boxShadow: '0 4px 15px rgba(0,0,0,0.2)',
+                overflowY: 'hidden'
             }}
         >
 
 
-            <form className="row g-2 text-white small">
+
+        <form className="row g-2 text-white small">
 
                 <div className="col-12">
                     <label className="form-label">Name</label>
