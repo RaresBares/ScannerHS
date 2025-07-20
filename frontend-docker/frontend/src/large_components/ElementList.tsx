@@ -62,7 +62,7 @@ const ElementList: ForwardRefRenderFunction<ElementListHandle, ElementListProps>
     }, [])
 
     useImperativeHandle(ref, () => ({
-        getItemById: (id: number): Item | undefined => items.find(item => item.id === id),
+        getItemById: (id: number) => items.find(item => item.id === id),
         updateItem: (id: number, newData: Partial<Item>) => {
             setItems(prev =>
                 prev.map(item => (item.id === id ? { ...item, ...newData } : item))
@@ -78,9 +78,7 @@ const ElementList: ForwardRefRenderFunction<ElementListHandle, ElementListProps>
                 {['all', 'A', 'B', 'C'].map(cat => (
                     <button
                         key={cat}
-                        className={`btn btn-sm ${
-                            filter === cat ? 'btn-success text-white' : 'btn-outline-success'
-                        } rounded-pill px-3 py-1 shadow`}
+                        className={`btn btn-sm ${filter === cat ? 'btn-success text-white' : 'btn-outline-success'} rounded-pill px-3 py-1 shadow`}
                         onClick={() => setFilter(cat)}
                     >
                         {cat === 'all' ? 'Alle' : `Kategorie ${cat}`}
