@@ -6,7 +6,7 @@ import SettingCard from "./large_components/SettingCard.tsx";
 export default function PanelLayout() {
     const [showFilter, setShowFilter] = useState(true);
     const contentRef = useRef<HTMLDivElement>(null);
-    const [maxHeight, setMaxHeight] = useState<string>('300px');
+    const [, setMaxHeight] = useState<string>('300px');
 
     useEffect(() => {
         if (contentRef.current) {
@@ -29,7 +29,7 @@ export default function PanelLayout() {
                             <p className="mb-0">Oben links</p>
                         </div>
                         <div className="card military-card bg-success bg-opacity-50 text-white text-center p-4 flex-fill">
-                            <h2 className="fw-bold">Karte 2</h2>
+                            <SettingCard />
                             <p className="mb-0">Unten links</p>
                         </div>
                     </div>
