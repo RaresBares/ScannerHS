@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import type { Item } from './ElementList'
 
 type Props = {
@@ -8,10 +8,13 @@ type Props = {
 
 export default function ElementEditCard({ selectedItem, onSaveSuccess }: Props) {
     const [formData, setFormData] = useState<Item | null>(null)
+    const [animationKey, setAnimationKey] = useState(0)
+    const containerRef = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
         if (selectedItem) {
             setFormData({ ...selectedItem })
+            setAnimationKey(prev => prev + 1)
         }
     }, [selectedItem])
 
@@ -38,127 +41,149 @@ export default function ElementEditCard({ selectedItem, onSaveSuccess }: Props) 
     }
 
     return (
-        <div
-            className="w-100 h-100 d-flex flex-column"
-            style={{
-                padding: '1rem',
-                backgroundColor: 'rgba(255, 255, 255, 0.03)',
-                borderRadius: '1rem',
-                backdropFilter: 'blur(6px)',
-                border: '1px solid rgba(255, 255, 255, 0.0)',
-                boxShadow: '0 4px 15px rgba(0,0,0,0.2)',
-                overflowY: 'hidden'
-            }}
-        >
-            <form className="row g-2 text-white small" onSubmit={e => { e.preventDefault(); handleSave() }}>
-                <div className="col-12">
-                    <label className="form-label">Name</label>
-                    <input
-                        type="text"
-                        className="form-control form-control-sm rounded-pill"
-                        value={formData.name}
-                        onChange={e => handleChange('name', e.target.value)}
-                    />
-                </div>
+        <>
+            <div
+                key={animationKey}
+                ref={containerRef}
+                className="w-100 h-100 d-flex flex-column pulse-anim"
+                style={{
+                    padding: '1rem',
+                    backgroundColor: 'rgba(255, 255, 255, 0.03)',
+                    borderRadius: '1rem',
+                    backdropFilter: 'blur(6px)',
+                    border: '1px solid rgba(255, 255, 255, 0.0)',
+                    boxShadow: '0 4px 15px rgba(0,0,0,0.2)',
+                    overflowY: 'hidden'
+                }}
+            >
+                <form className="row g-2 text-white small" onSubmit={e => { e.preventDefault(); handleSave() }}>
+                    <div className="col-12">
+                        <label className="form-label">Name</label>
+                        <input
+                            type="text"
+                            className="form-control form-control-sm rounded-pill"
+                            value={formData.name}
+                            onChange={e => handleChange('name', e.target.value)}
+                        />
+                    </div>
 
-                <div className="col-6">
-                    <label className="form-label">Anzahl</label>
-                    <input
-                        type="text"
-                        className="form-control form-control-sm rounded-pill"
-                        value={formData.amount}
-                        onChange={e => handleChange('amount', e.target.value)}
-                    />
-                </div>
+                    <div className="col-4">
+                        <label className="form-label">Anzahl</label>
+                        <input
+                            type="text"
+                            className="form-control form-control-sm rounded-pill"
+                            value={formData.amount}
+                            onChange={e => handleChange('amount', e.target.value)}
+                        />
+                    </div>
 
-                <div className="col-6">
-                    <label className="form-label">Barcode</label>
-                    <input
-                        type="text"
-                        className="form-control form-control-sm rounded-pill"
-                        value={formData.barcode}
-                        onChange={e => handleChange('barcode', e.target.value)}
-                    />
-                </div>
+                    <div className="col-4">
+                        <label className="form-label">Shelf_id</label>
+                        <input
+                            type="text"
+                            className="form-control form-control-sm rounded-pill"
+                            value={formData.shelf}
+                            onChange={e => handleChange('shelf', e.target.value)}
+                        />
+                    </div>
 
-                <div className="col-4">
-                    <label className="form-label">Upper Bound</label>
-                    <input
-                        type="text"
-                        className="form-control form-control-sm rounded-pill"
-                        value={formData.max}
-                        onChange={e => handleChange('max', e.target.value)}
-                    />
-                </div>
+                    <div className="col-4">
+                        <label className="form-label">Barcode</label>
+                        <input
+                            type="text"
+                            className="form-control form-control-sm rounded-pill"
+                            value={formData.barcode}
+                            onChange={e => handleChange('barcode', e.target.value)}
+                        />
+                    </div>
 
-                <div className="col-4">
-                    <label className="form-label">Lower Bound</label>
-                    <input
-                        type="text"
-                        className="form-control form-control-sm rounded-pill"
-                        value={formData.min}
-                        onChange={e => handleChange('min', e.target.value)}
-                    />
-                </div>
+                    <div className="col-4">
+                        <label className="form-label">Upper Bound</label>
+                        <input
+                            type="text"
+                            className="form-control form-control-sm rounded-pill"
+                            value={formData.max}
+                            onChange={e => handleChange('max', e.target.value)}
+                        />
+                    </div>
 
-                <div className="col-4">
-                    <label className="form-label">Expiry Date</label>
-                    <input
-                        type="text"
-                        className="form-control form-control-sm rounded-pill"
-                        value={formData.expiry}
-                        onChange={e => handleChange('expiry', e.target.value)}
-                    />
-                </div>
+                    <div className="col-4">
+                        <label className="form-label">Lower Bound</label>
+                        <input
+                            type="text"
+                            className="form-control form-control-sm rounded-pill"
+                            value={formData.min}
+                            onChange={e => handleChange('min', e.target.value)}
+                        />
+                    </div>
 
-                <div className="col-6">
-                    <label className="form-label">Created At</label>
-                    <input
-                        type="text"
-                        className="form-control form-control-sm rounded-pill"
-                        value={formData.createdAt}
-                        onChange={e => handleChange('createdAt', e.target.value)}
-                    />
-                </div>
+                    <div className="col-4">
+                        <label className="form-label">Expiry Date</label>
+                        <input
+                            type="text"
+                            className="form-control form-control-sm rounded-pill"
+                            value={formData.expiry}
+                            onChange={e => handleChange('expiry', e.target.value)}
+                        />
+                    </div>
 
-                <div className="col-6">
-                    <label className="form-label">Beschreibung</label>
-                    <input
-                        type="text"
-                        className="form-control form-control-sm rounded-pill"
-                        value={formData.description}
-                        onChange={e => handleChange('description', e.target.value)}
-                    />
-                </div>
+                    <div className="col-6">
+                        <label className="form-label">Created At</label>
+                        <input
+                            type="text"
+                            className="form-control form-control-sm rounded-pill"
+                            value={formData.createdAt}
+                            onChange={e => handleChange('createdAt', e.target.value)}
+                        />
+                    </div>
 
-                <div className="col-12 d-flex justify-content-end gap-2 mt-2" style={{
-                    paddingTop: '1rem',
-                }}>
-                    <button className="btn fancy-delete btn-danger btn-sm rounded-pill px-3 text-white position-relative overflow-hidden">
-                        <span className="btn-text">Löschen</span>
-                        <span className="btn-icon">🗑️</span>
-                    </button>
+                    <div className="col-6">
+                        <label className="form-label">Beschreibung</label>
+                        <input
+                            type="text"
+                            className="form-control form-control-sm rounded-pill"
+                            value={formData.description}
+                            onChange={e => handleChange('description', e.target.value)}
+                        />
+                    </div>
 
+                    <div className="col-12 d-flex justify-content-end gap-2 mt-2" style={{ paddingTop: '1rem' }}>
+                        <button className="btn fancy-delete btn-danger btn-sm rounded-pill px-3 text-white position-relative overflow-hidden">
+                            <span className="btn-text">Löschen</span>
+                            <span className="btn-icon">🗑️</span>
+                        </button>
 
-                    <button
-                        type="reset"
-                        className="btn fancy-reset btn-outline-light btn-sm rounded-pill px-3 position-relative overflow-hidden text-white"
-                    >
-                        <span className="btn-text">Reset</span>
-                        <span className="btn-icon">🔄</span>
-                    </button>
+                        <button
+                            type="reset"
+                            className="btn fancy-reset btn-outline-light btn-sm rounded-pill px-3 position-relative overflow-hidden text-white"
+                        >
+                            <span className="btn-text">Reset</span>
+                            <span className="btn-icon">🔄</span>
+                        </button>
 
-                    <button
-                        type="submit"
-                        className="btn fancy-save btn-light btn-sm rounded-pill px-3 position-relative overflow-hidden text-dark"
-                        onClick={handleSave}
-                    >
-                        <span className="btn-text">Speichern</span>
-                        <span className="btn-icon">💾</span>
-                    </button>
-                </div>
-            </form>
-        </div>
+                        <button
+                            type="submit"
+                            className="btn fancy-save btn-light btn-sm rounded-pill px-3 position-relative overflow-hidden text-dark"
+                        >
+                            <span className="btn-text">Speichern</span>
+                            <span className="btn-icon">💾</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
 
+            <style>{`
+    .pulse-anim {
+        animation: pulse-grow 0.3s ease;
+    }
+
+    @keyframes pulse-grow {
+        0% { transform: scale(1); filter: brightness(1); }
+        30% { transform: scale(1.01); filter: brightness(1.03); }
+        100% { transform: scale(1); filter: brightness(1); }
+    }
+`}</style>
+
+        </>
     )
 }
