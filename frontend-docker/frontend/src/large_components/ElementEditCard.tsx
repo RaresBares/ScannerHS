@@ -134,10 +134,31 @@ export default function ElementEditCard({ selectedItem, onSaveSuccess }: Props) 
                 <div className="col-12 d-flex justify-content-end gap-2 mt-2" style={{
                     paddingTop: '1rem',
                 }}>
-                    <button type="reset" className="btn btn-outline-light btn-sm rounded-pill px-3">Reset</button>
-                    <button type="submit" className="btn btn-light btn-sm rounded-pill px-3">💾 Speichern</button>
+                    <button className="btn fancy-delete btn-danger btn-sm rounded-pill px-3 text-white position-relative overflow-hidden">
+                        <span className="btn-text">Löschen</span>
+                        <span className="btn-icon">🗑️</span>
+                    </button>
+
+
+                    <button
+                        type="reset"
+                        className="btn fancy-reset btn-outline-light btn-sm rounded-pill px-3 position-relative overflow-hidden text-white"
+                    >
+                        <span className="btn-text">Reset</span>
+                        <span className="btn-icon">🔄</span>
+                    </button>
+
+                    <button
+                        type="submit"
+                        className="btn fancy-save btn-light btn-sm rounded-pill px-3 position-relative overflow-hidden text-dark"
+                        onClick={handleSave}
+                    >
+                        <span className="btn-text">Speichern</span>
+                        <span className="btn-icon">💾</span>
+                    </button>
                 </div>
             </form>
         </div>
+
     )
 }

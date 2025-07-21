@@ -3,7 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 export default function SettingCard() {
     return (
         <div
-            className="w-100 h-100 d-flex flex-column "
+            className="w-100 d-flex flex-column "
             style={{
                 padding: '1rem',
                 backgroundColor: 'rgba(255, 255, 255, 0.03)',
@@ -57,11 +57,27 @@ export default function SettingCard() {
                     </div>
                 </div>
 
-                <div className="col-12 d-flex justify-content-end gap-2 mt-2">
-                    <button type="reset" className="btn btn-outline-light btn-sm rounded-pill px-3">Reset</button>
-                    <button type="submit" className="btn btn-light btn-sm rounded-pill px-3">Suchen</button>
-                </div>
-            </form>
+
+            <div className="col-12 d-flex justify-content-end gap-2 mt-2">
+                <button
+                    type="reset"
+                    className="btn fancy-reset btn-outline-light btn-sm rounded-pill px-3 position-relative overflow-hidden text-white"
+                >
+                    <span className="btn-text">Reset</span>
+                    <span className="btn-icon">🔄</span>
+                </button>
+
+                <button
+                    type="submit"
+                    className="btn fancy-search btn-light btn-sm rounded-pill px-3 position-relative overflow-hidden text-dark"
+                >
+                    <span className="btn-text">Suchen</span>
+                    <span className="btn-icon">🔍</span>
+                </button>
+            </div>
+
+
+        </form>
         </div>
     );
 }

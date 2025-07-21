@@ -66,3 +66,36 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+.fancy-delete {
+  min-width: 90px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: background-color 0.3s ease;
+}
+
+.fancy-delete .btn-text,
+.fancy-delete .btn-icon {
+  position: absolute;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.fancy-delete .btn-text {
+  opacity: 1;
+}
+
+.fancy-delete .btn-icon {
+  opacity: 0;
+}
+
+.fancy-delete:hover .btn-text {
+  opacity: 0;
+}
+
+.fancy-delete:hover .btn-icon {
+  opacity: 1;
+}
