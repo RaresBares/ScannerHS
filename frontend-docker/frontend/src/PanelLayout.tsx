@@ -107,7 +107,10 @@ export default function PanelLayout() {
                                     maxHeight: showFilter ? '60vh' : '0vh',
                                     transition: 'max-height 0.5s ease, opacity 0.5s ease',
                                     opacity: showFilter ? 1 : 0,
-                                    pointerEvents: showFilter ? 'auto' : 'none'
+                                    pointerEvents: showFilter ? 'auto' : 'none',
+                                    scrollbarWidth: 'none',
+                                    msOverflowStyle: 'none'
+
                                 }}
                             >
                                 <SettingCard/>

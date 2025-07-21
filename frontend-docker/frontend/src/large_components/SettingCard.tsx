@@ -11,13 +11,15 @@ export default function SettingCard() {
                 backdropFilter: 'blur(6px)',
                 border: '1px solid rgba(255, 255, 255, 0.0)',
                 boxShadow: '0 4px 15px rgba(0,0,0,0.2)',
-                overflowY: 'hidden'
+                overflow: 'hidden',
+                scrollbarWidth: 'none',
+                msOverflowStyle: 'none'
             }}
         >
 
 
 
-        <form className="row g-2 text-white small">
+            <form className="row g-2 text-white small">
 
                 <div className="col-12">
                     <label className="form-label">Name</label>
@@ -58,26 +60,26 @@ export default function SettingCard() {
                 </div>
 
 
-            <div className="col-12 d-flex justify-content-end gap-2 mt-2">
-                <button
-                    type="reset"
-                    className="btn fancy-reset btn-outline-light btn-sm rounded-pill px-3 position-relative overflow-hidden text-white"
-                >
-                    <span className="btn-text">Reset</span>
-                    <span className="btn-icon">🔄</span>
-                </button>
+                <div className="col-12 d-flex justify-content-end gap-2 mt-2">
+                    <button
+                        type="reset"
+                        className="btn fancy-reset btn-outline-light btn-sm rounded-pill px-3 position-relative overflow-hidden text-white"
+                    >
+                        <span className="btn-text">Reset</span>
+                        <span className="btn-icon">🔄</span>
+                    </button>
 
-                <button
-                    type="submit"
-                    className="btn fancy-search btn-light btn-sm rounded-pill px-3 position-relative overflow-hidden text-dark"
-                >
-                    <span className="btn-text">Suchen</span>
-                    <span className="btn-icon">🔍</span>
-                </button>
-            </div>
+                    <button
+                        type="submit"
+                        className="btn fancy-search btn-light btn-sm rounded-pill px-3 position-relative overflow-hidden text-dark"
+                    >
+                        <span className="btn-text">Suchen</span>
+                        <span className="btn-icon">🔍</span>
+                    </button>
+                </div>
 
 
-        </form>
+            </form>
         </div>
     );
 }
