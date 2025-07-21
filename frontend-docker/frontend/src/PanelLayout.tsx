@@ -1,8 +1,9 @@
-import { Suspense, useState, useRef } from 'react'
+import {Suspense, useState, useRef} from 'react'
 import ModernNavbar from './NavBar'
 import SettingCard from './large_components/SettingCard'
-import ElementList, { type ElementListHandle, type Item } from './large_components/ElementList'
+import ElementList, {type ElementListHandle, type Item} from './large_components/ElementList'
 import ElementEditCard from './large_components/ElementEditCard'
+import MailingList from "./large_components/MailingList.tsx";
 
 export default function PanelLayout() {
     const [showFilter, setShowFilter] = useState(true)
@@ -26,14 +27,22 @@ export default function PanelLayout() {
 
     return (
         <div className="vh-100 vw-100 d-flex flex-column bg-dark text-white">
-            <ModernNavbar />
+            <ModernNavbar/>
             <div className="container-fluid flex-grow-1 py-3 overflow-hidden">
                 <div className="row h-100 g-3">
                     {/* Linke Seite */}
                     <div className="col-12 col-lg-6 d-flex flex-column gap-3">
-                        <div className="card military-card bg-success bg-opacity-75 text-white text-center p-4 flex-fill">
-                            <h2 className="fw-bold">Karte 1</h2>
-                            <p className="mb-0">Oben links</p>
+
+                        <div
+                            className="card military-card bg-success bg-opacity-75 text-white text-center p-4 flex-fill">
+                            <div style={{paddingBottom: '20px'}}>
+
+
+                                <h5 className="mb-0 fw-bold text-white">📝 Notifications</h5>
+
+                            </div>
+
+                            <MailingList/>
                         </div>
 
                         {/* ElementEditCard mit Toggle */}
@@ -44,7 +53,8 @@ export default function PanelLayout() {
                                 maxHeight: editOpen ? '50vh' : '5rem'
                             }}
                         >
-                            <div className="d-flex justify-content-between align-items-center p-3" style={{ minHeight: '4.5rem' }}>
+                            <div className="d-flex justify-content-between align-items-center p-3"
+                                 style={{minHeight: '4.5rem'}}>
                                 <h5 className="mb-0 fw-bold text-white">📝 Element bearbeiten</h5>
                                 <button
                                     className="btn btn-sm btn-outline-light rounded-pill px-3 py-1"
@@ -74,7 +84,8 @@ export default function PanelLayout() {
                     <div className="col-12 col-lg-6 d-flex flex-column h-100 gap-3">
                         {/* Filter-Karte */}
                         <div className="card military-card bg-success bg-opacity-25 p-0 d-flex flex-column">
-                            <div className="d-flex justify-content-between align-items-center p-3" style={{ minHeight: '4.5rem' }}>
+                            <div className="d-flex justify-content-between align-items-center p-3"
+                                 style={{minHeight: '4.5rem'}}>
                                 <h5 className="mb-0 fw-bold text-white">🔍 Suchfilter</h5>
                                 <button
                                     onClick={() => setShowFilter(prev => !prev)}
@@ -93,21 +104,22 @@ export default function PanelLayout() {
                             <div
                                 className="p-3 overflow-auto"
                                 style={{
-                                    maxHeight: showFilter ? '60vh' : '0',
+                                    maxHeight: showFilter ? '60vh' : '0vh',
                                     transition: 'max-height 0.5s ease, opacity 0.5s ease',
                                     opacity: showFilter ? 1 : 0,
                                     pointerEvents: showFilter ? 'auto' : 'none'
                                 }}
                             >
-                                <SettingCard />
+                                <SettingCard/>
                             </div>
                         </div>
 
                         {/* Elementliste */}
-                        <div className="card military-card bg-success bg-opacity-50 p-3 d-flex flex-column flex-grow-1 overflow-hidden">
+                        <div
+                            className="card military-card bg-success bg-opacity-50 p-3 d-flex flex-column flex-grow-1 overflow-hidden">
                             <div className="flex-grow-1 overflow-auto">
                                 <Suspense fallback={<p className="text-white">Loading...</p>}>
-                                    <ElementList ref={listRef} onItemClick={handleItemClick} />
+                                    <ElementList ref={listRef} onItemClick={handleItemClick}/>
                                 </Suspense>
                             </div>
                         </div>
