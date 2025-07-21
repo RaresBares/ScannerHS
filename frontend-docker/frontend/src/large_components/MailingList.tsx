@@ -28,6 +28,18 @@ function fetch_notifications(): Promise<Notification[]> {
                     title: 'Update verfügbar',
                     description: 'Es gibt ein neues Update für dein Dashboard.',
                     date: '2025-07-15'
+                },
+                {
+                    id: 4,
+                    title: 'Update verfügbar',
+                    description: 'Es gibt ein neues Update für dein Dashboard.',
+                    date: '2025-07-15'
+                },
+                {
+                    id: 5,
+                    title: 'Update verfügbar',
+                    description: 'Es gibt ein neues Update für dein Dashboard.',
+                    date: '2025-07-15'
                 }
             ])
         }, 1000)
@@ -50,6 +62,14 @@ export default function MailingList() {
         })
     }, [])
 
+    useEffect(() => {
+        if (openNotification) {
+            document.body.classList.add('modal-open')
+        } else {
+            document.body.classList.remove('modal-open')
+        }
+    }, [openNotification])
+
     const removeNotification = (id: number) => {
         notify_deletion(id)
         setNotifications(prev => prev.filter(n => n.id !== id))
@@ -64,7 +84,7 @@ export default function MailingList() {
                 backdropFilter: 'blur(6px)',
                 border: '1px solid rgba(255, 255, 255, 0.0)',
                 boxShadow: '0 4px 15px rgba(0,0,0,0.2)',
-                overflowY: 'hidden',
+                overflowY: 'auto',
                 height: '100%'
             }}>
                 {loading ? (
@@ -77,17 +97,11 @@ export default function MailingList() {
                     notifications.map(n => (
                         <div
                             key={n.id}
-                            className="position-relative px-4 py-3 rounded-4 bg-light bg-opacity-10 text-white small shadow-sm notification-item"
-                            style={{
-                                cursor: 'pointer',
-                                transition: 'all 0.3s ease',
-                                backdropFilter: 'blur(4px)',
-                            }}
+                            className="notification-entry"
                             onClick={() => setOpenNotification(n)}
                         >
-                            <span className="fw-bold">{n.title}</span>
-                            <span className="ms-2 text-secondary" style={{ fontSize: '0.75rem' }}>{n.date}</span>
-
+                            <div className="notification-date">{n.date}</div>
+                            <div className="notification-title">{n.title}</div>
                             <button
                                 className="btn btn-sm fancy-x shadow-sm"
                                 onClick={e => {
@@ -104,8 +118,7 @@ export default function MailingList() {
 
             {openNotification && (
                 <div
-                    className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center"
-                    style={{ backgroundColor: 'rgba(0,0,0,0.6)', zIndex: 9999 }}
+                    className="notification-overlay"
                     onClick={() => setOpenNotification(null)}
                 >
                     <div
@@ -113,7 +126,7 @@ export default function MailingList() {
                         style={{ maxWidth: '90%', width: '400px', backdropFilter: 'blur(8px)' }}
                         onClick={e => e.stopPropagation()}
                     >
-                        <h5 className="mb-2">{openNotification.title}</h5>
+                        <h5 className="mb-2 fw-bold">{openNotification.title}</h5>
                         <p className="text-secondary small mb-2">{openNotification.date}</p>
                         <p className="mb-0">{openNotification.description}</p>
                         <div className="text-end mt-3">
@@ -129,22 +142,43 @@ export default function MailingList() {
             )}
 
             <style>{`
-                .notification-item {
-                    position: relative;
-                    overflow: hidden;
-                    transition: transform 0.3s ease, background-color 0.3s ease;
+                .notification-entry {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    padding: 1rem;
+                    border-radius: 1rem;
+                    background-color: rgba(255, 255, 255, 0.06);
+                    backdrop-filter: blur(4px);
+                    cursor: pointer;
+                    transition: all 0.25s ease;
+                    color: white;
+                    font-size: 0.92rem;
+                    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                    font-family: 'Inter', sans-serif;
                 }
 
-                .notification-item:hover {
-                    transform: translateX(-4px);
-                    background-color: rgba(255,255,255,0.05);
+                .notification-entry:hover {
+                    transform: translateY(-2px);
+                    background-color: rgba(255, 255, 255, 0.1);
+                }
+
+                .notification-date {
+                    color: #9fa7b3;
+                    font-weight: 500;
+                    font-size: 0.85rem;
+                    flex: 0 0 40%;
+                }
+
+                .notification-title {
+                    flex: 1;
+                    font-size: 0.95rem;
+                    font-weight: 600;
+                    text-align: right;
                 }
 
                 .fancy-x {
-                    position: absolute;
-                    top: 50%;
-                    right: 1rem;
-                    transform: translateY(-50%);
+                    margin-left: 0.75rem;
                     border: none;
                     border-radius: 50%;
                     background: rgba(255, 255, 255, 0.1);
@@ -159,7 +193,7 @@ export default function MailingList() {
                     transition: all 0.3s ease;
                 }
 
-                .notification-item:hover .fancy-x {
+                .notification-entry:hover .fancy-x {
                     opacity: 1;
                     background: rgba(255, 80, 80, 0.2);
                     color: #ffdddd;
@@ -182,6 +216,26 @@ export default function MailingList() {
 
                 @keyframes spin {
                     to { transform: rotate(360deg); }
+                }
+
+                .notification-overlay {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    z-index: 9999;
+                    background-color: rgba(0, 0, 0, 0.6);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    pointer-events: auto;
+                }
+
+                body.modal-open .military-card:hover {
+                    transform: none !important;
+                    background-color: inherit !important;
+                    transition: none !important;
                 }
             `}</style>
         </>

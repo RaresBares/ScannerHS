@@ -1,6 +1,6 @@
 import {
-    useEffect,
     useState,
+    useEffect,
     useImperativeHandle,
     forwardRef,
     type ForwardRefRenderFunction
@@ -17,60 +17,89 @@ export type Item = {
     createdAt?: string
     barcode?: string
     description?: string
+    shelf?: string
 }
 
 export type ElementListHandle = {
     getItemById: (id: number) => Item | undefined
     updateItem: (id: number, newData: Partial<Item>) => void
+    applyFilters: (filters: Record<string, any>) => void
 }
 
 type ElementListProps = {
     onItemClick?: (id: number) => void
 }
 
-function fetchInfo(): Promise<Item[]> {
+function fetchInfo(filters?: Record<string, any>): Promise<Item[]> {
     return new Promise(resolve => {
         setTimeout(() => {
-            resolve(
-                Array.from({ length: 50 }, (_, i) => ({
-                    id: i + 1,
-                    category: ['A', 'B', 'C'][i % 3],
-                    name: `Element ${i + 1}`,
-                    amount: Math.floor(Math.random() * 100),
-                    min: 10,
-                    max: 80,
-                    expiry: new Date(Date.now() + Math.random() * 1e10).toISOString().split('T')[0],
-                    createdAt: new Date(Date.now() - Math.random() * 1e10).toISOString().split('T')[0],
-                    barcode: `CODE-${i + 1000}`,
-                    description: `Beschreibung für Element ${i + 1}`,
-                }))
-            )
-        }, 1000)
+            let data: Item[] = Array.from({ length: 50 }, (_, i) => ({
+                id: i + 1,
+                category: ['A', 'B', 'C'][i % 3],
+                name: `Element ${i + 1}`,
+                amount: Math.floor(Math.random() * 100),
+                min: 10,
+                max: 80,
+                expiry: new Date(Date.now() + Math.random() * 1e10).toISOString().split('T')[0],
+                createdAt: new Date(Date.now() - Math.random() * 1e10).toISOString().split('T')[0],
+                barcode: `CODE-${i + 1000}`,
+                description: `Beschreibung für Element ${i + 1}`,
+                shelf: `Shelf-${(i % 5) + 1}`
+            }))
+            console.log(filters )
+            // Dummy-Filter
+            if (filters?.name) {
+                data = data.filter(item =>
+                    item.name.toLowerCase().includes(filters.name.toLowerCase())
+                )
+            }
+            if (filters?.barcode) {
+                data = data.filter(item =>
+                    item.barcode?.toLowerCase().includes(filters.barcode.toLowerCase())
+                )
+            }
+            if (filters?.shelf) {
+                data = data.filter(item =>
+                    item.shelf?.toLowerCase().includes(filters.shelf.toLowerCase())
+                )
+            }
+
+            resolve(data)
+        }, 800)
     })
 }
 
 const ElementList: ForwardRefRenderFunction<ElementListHandle, ElementListProps> = (props, ref) => {
-    const [filter, setFilter] = useState<string>('all')
     const [items, setItems] = useState<Item[]>([])
-    const [loading, setLoading] = useState<boolean>(true)
+    const [loading, setLoading] = useState(true)
+    const [categoryFilter, setCategoryFilter] = useState('all')
 
     useEffect(() => {
-        fetchInfo().then((data: Item[]) => {
+        fetchInfo().then(data => {
             setItems(data)
             setLoading(false)
         })
     }, [])
 
     useImperativeHandle(ref, () => ({
-        getItemById: (id: number) => items.find(item => item.id === id),
-        updateItem: (id: number, newData: Partial<Item>) => {
+        getItemById: id => items.find(item => item.id === id),
+        updateItem: (id, newData) => {
             setItems(prev =>
                 prev.map(item => (item.id === id ? { ...item, ...newData } : item))
             )
         },
+        applyFilters: filters => {
+            setLoading(true)
+            fetchInfo(filters).then(data => {
+                setItems(data)
+                setLoading(false)
+            })
+        }
     }), [items])
 
-    const filteredItems = filter === 'all' ? items : items.filter(i => i.category === filter)
+    const visibleItems = categoryFilter === 'all'
+        ? items
+        : items.filter(item => item.category === categoryFilter)
 
     return (
         <div className="h-100 d-flex flex-column px-3 py-2">
@@ -78,8 +107,8 @@ const ElementList: ForwardRefRenderFunction<ElementListHandle, ElementListProps>
                 {['all', 'A', 'B', 'C'].map(cat => (
                     <button
                         key={cat}
-                        className={`btn btn-sm ${filter === cat ? 'btn-success text-white' : 'btn-outline-success'} rounded-pill px-3 py-1 shadow`}
-                        onClick={() => setFilter(cat)}
+                        className={`btn btn-sm ${categoryFilter === cat ? 'btn-success text-white' : 'btn-outline-success'} rounded-pill px-3 py-1 shadow`}
+                        onClick={() => setCategoryFilter(cat)}
                     >
                         {cat === 'all' ? 'Alle' : `Kategorie ${cat}`}
                     </button>
@@ -91,9 +120,11 @@ const ElementList: ForwardRefRenderFunction<ElementListHandle, ElementListProps>
                     <div className="d-flex justify-content-center align-items-center h-100">
                         <div className="spinner-border text-success" role="status" />
                     </div>
+                ) : visibleItems.length === 0 ? (
+                    <p className="text-white small opacity-50 text-center mt-4">Keine Elemente gefunden</p>
                 ) : (
                     <div className="list-group">
-                        {filteredItems.map(item => (
+                        {visibleItems.map(item => (
                             <div
                                 key={item.id}
                                 className="list-group-item list-group-item-action border-success d-flex justify-content-between align-items-center mb-2 shadow-sm rounded"
@@ -103,7 +134,7 @@ const ElementList: ForwardRefRenderFunction<ElementListHandle, ElementListProps>
                                     border: '1px solid #2fbf71',
                                     transition: 'background-color 0.2s ease',
                                     cursor: 'pointer',
-                                    padding: '0.75rem 1rem',
+                                    padding: '0.75rem 1rem'
                                 }}
                                 onClick={() => props.onItemClick?.(item.id)}
                                 onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#165534')}
