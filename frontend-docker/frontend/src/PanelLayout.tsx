@@ -72,11 +72,13 @@ export default function PanelLayout() {
                                     </div>
                                 )}
                                 <button
-                                    className={`btn btn-sm btn-outline-light rounded-circle shadow-sm ms-2 ${showQuickActions ? 'bg-light text-dark' : ''}`}
+                                    className={`btn btn-sm rounded-circle ms-auto ${showQuickActions ? 'btn-light text-dark' : 'btn-outline-light text-white'}`}
+                                    onClick={() => setShowQuickActions((f) => !f)}
+                                    style={{ width: 32, height: 32, padding: 0 }}
                                     title="Schnellaktionen"
-                                    onClick={() => setShowQuickActions(prev => !prev)}
-                                    style={{ width: '32px', height: '32px' }}
-                                >⚡</button>
+                                >
+                                    ⚡
+                                </button>
                             </div>
                             <div className="flex-grow-1 overflow-auto" style={{
                                 height: 0,
