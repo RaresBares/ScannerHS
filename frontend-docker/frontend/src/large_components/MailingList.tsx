@@ -85,6 +85,8 @@ export default function MailingList() {
                 border: '1px solid rgba(255, 255, 255, 0.0)',
                 boxShadow: '0 4px 15px rgba(0,0,0,0.2)',
                 overflowY: 'auto',
+                scrollbarGutter: 'stable both-edges',
+
                 height: '100%'
             }}>
                 {loading ? (
